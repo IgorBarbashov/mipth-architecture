@@ -1,0 +1,29 @@
+services:
+  ms-hello:
+    build:
+      context: ./ms-hello
+      dockerfile: Dockerfile
+    environment:
+      - MS_HELLO_HOST=${MS_HELLO_HOST}
+      - MS_HELLO_CONTAINER_PORT=${MS_HELLO_CONTAINER_PORT}
+      - DEBUG="True"
+    networks:
+      - ms_network
+
+  proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    ports:
+      - "${PROXY_HOST_PORT}:${PROXY_CONTAINER_PORT}"
+    environment:
+      - PROXY_CONTAINER_PORT=${PROXY_CONTAINER_PORT}
+      - MS_HELLO_HOST=${MS_HELLO_HOST}
+      - MS_HELLO_CONTAINER_PORT=${MS_HELLO_CONTAINER_PORT}
+    depends_on:
+      - ms-hello
+    networks:
+      - ms_network
+
+networks:
+  ms_network:
